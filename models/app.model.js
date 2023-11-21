@@ -9,5 +9,12 @@ exports.selectAllTopics = () =>{
 }
 
 exports.selectAllEndpoints = () => {
-    return Promise.resolve(endpoints)
+  return Promise.resolve(endpoints)
+}
+
+exports.selectArticles = (id) => {
+    return db.query(`SELECT * FROM articles
+    WHERE article_id = $1;`, [id]).then((result)=>{
+        return result.rows.length ? result.rows[0] : Promise.reject({status : 404, msg: 'Not found'})
+    })
 }
