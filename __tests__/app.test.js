@@ -10,6 +10,8 @@ const {
 } = require("../db/data/test-data/index");
 const json = require("../endpoints.json");
 const { convertTimestampToDate } = require("../db/seeds/utils");
+const toBeSorted = require('jest-sorted')
+
 
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
@@ -78,4 +80,53 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+describe.only("GET /api/articles", () => {
+  test("should return status code 200, and an array of all article objects, with a comment_count key included, and body key omitted", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        console.log(response.body, 'response here')
+        expect(response.body.length).toBe(13);
+        response.body.forEach((topic) => {
+          expect(topic).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test('comment count property should be accurate', () => {
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then((response)=>{
+      const index = response.body.findIndex(
+        (article) => article.article_id === 1
+      );
+      expect(response.body[index].comment_count).toBe(11)
+    })
+  });
+  test('array should be sorted by date in descending order', () => {
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then((response)=>{
+      expect(response.body).toBeSorted({
+        key: "created_at",
+        coerce: true,
+        descending: true,
+      });
+    })
+  });
+});
 
+// should return status code 200 and an array of all article objects with a comment_count key, and the body key omitted
+// comment count property should be accurate
+// objects should be sorted by date in descending order
