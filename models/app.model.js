@@ -9,11 +9,5 @@ exports.selectAllTopics = () =>{
 }
 
 exports.selectAllEndpoints = () => {
-    return new Promise((resolve, reject)=>{
-        if (!endpoints){
-            reject('No Information')
-        } else {
-            resolve(endpoints)
-        }
-    })
+    return Promise.resolve(endpoints)
 }
