@@ -80,7 +80,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("should return status code 200, and an array of all article objects, with a comment_count key included, and body key omitted", () => {
     return request(app)
       .get("/api/articles")
