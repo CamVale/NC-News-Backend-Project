@@ -30,6 +30,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
+    "jest-sorted": "^1.0.14",
     "pg": "^8.11.3",
     "supertest": "^6.3.3"
   },
