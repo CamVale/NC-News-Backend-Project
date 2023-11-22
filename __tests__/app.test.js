@@ -78,4 +78,28 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+describe('GET /api/articles/:article_id/comments', () => {
+  test('should return a 200 status code and an array of comments on the given article at  article_id', () => {
+    test("should respond with 200 status code and array of topic objects", () => {
+      const pathID = '1'
+      return request(app)
+        .get(`/api/articles/${pathID}/comments`)
+        .expect(200)
+        .then((response) => {
+          expect(response.body.length).toBe(3);
+          response.body.topics.forEach((topic) => {
+            expect(typeof topic.description).toBe("string");
+            expect(typeof topic.slug).toBe("string");
+          });
+        });
+    });
+  });
+});
+
+// should return 200 status code and an array of comments for the given article_id
+// each comment element should have keys of comment_id votes created_at author body article_id
+// array should be sorted in descending order
+// should return a 404 if queried with a non-existent id (article doesn't exist)
+// should return a 400 error when queried with an invalid id 
+// should return an empty array if article exists but has no comments
 
