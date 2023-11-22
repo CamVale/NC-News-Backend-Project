@@ -79,7 +79,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe.only('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
   test('should return a 200 status code and an array of comments on the given article at  article_id - with correct keys on ojects', () => {
       const pathID = '1'
       return request(app)
