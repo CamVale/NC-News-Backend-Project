@@ -86,9 +86,9 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        console.log(response.body, 'response here')
-        expect(response.body.length).toBe(13);
-        response.body.forEach((topic) => {
+        console.log(response.body.articles, 'response here')
+        expect(response.body.articles.length).toBe(13);
+        response.body.articles.forEach((topic) => {
           expect(topic).toMatchObject({
             article_id: expect.any(Number),
             title: expect.any(String),
@@ -107,10 +107,10 @@ describe("GET /api/articles", () => {
     .get('/api/articles')
     .expect(200)
     .then((response)=>{
-      const index = response.body.findIndex(
+      const index = response.body.articles.findIndex(
         (article) => article.article_id === 1
       );
-      expect(response.body[index].comment_count).toBe(11)
+      expect(response.body.articles[index].comment_count).toBe(11)
     })
   });
   test('array should be sorted by date in descending order', () => {
@@ -118,7 +118,7 @@ describe("GET /api/articles", () => {
     .get('/api/articles')
     .expect(200)
     .then((response)=>{
-      expect(response.body).toBeSorted({
+      expect(response.body.articles).toBeSorted({
         key: "created_at",
         coerce: true,
         descending: true,

@@ -20,9 +20,9 @@ exports.getArticlesByID = (req, res, next) => {
   .catch(next)
 };
 
-exports.getArticlesByQuery = (req, res, next) => {
+exports.getArticles = (req, res, next) => {
   selectArticlesByQuery().then((articles)=>{
-    res.status(200).send(articles)
+    res.status(200).send({articles})
   })
   .catch(next)
 }
