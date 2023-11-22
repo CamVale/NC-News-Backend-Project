@@ -10,6 +10,7 @@ const {
 } = require("../db/data/test-data/index");
 const json = require("../endpoints.json");
 const { convertTimestampToDate } = require("../db/seeds/utils");
+const toBeSorted = require('jest-sorted')
 
 beforeEach(() => seed({ articleData, commentData, topicData, userData }));
 afterAll(() => db.end());
@@ -78,22 +79,23 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe.skip('GET /api/articles/:article_id/comments', () => {
+describe.only('GET /api/articles/:article_id/comments', () => {
   test('should return a 200 status code and an array of comments on the given article at  article_id - with correct keys on ojects', () => {
       const pathID = '1'
       return request(app)
         .get(`/api/articles/${pathID}/comments`)
         .expect(200)
         .then((response) => {
-          expect(response.body.length).toBe(11);
-          response.body.forEach((comment) => {
+          console.log(response.body.comments[0])
+          expect(response.body.comments.length).toBe(11);
+          response.body.comments.forEach((comment) => {
             expect(comment).toMatchObject({
               comment_id: expect.any(Number),
               votes: expect.any(Number),
               created_at: expect.any(String),
               author: expect.any(String),
               body: expect.any(String),
-              article_id: expect.any(String),
+              article_id: expect.any(Number),
             });
           });
         });
@@ -104,7 +106,7 @@ describe.skip('GET /api/articles/:article_id/comments', () => {
         .get(`/api/articles/${pathID}/comments`)
         .expect(200)
         .then((response) => {
-          expect(response.body).toBeSorted({
+          expect(response.body.comments).toBeSorted({
             key: "created_at",
             coerce: true,
             descending: true,
@@ -124,7 +126,7 @@ describe.skip('GET /api/articles/:article_id/comments', () => {
       const pathID = 'pigeon'
       return request(app)
         .get(`/api/articles/${pathID}/comments`)
-        .expect(404)
+        .expect(400)
         .then((response) => {
           expect(response.body.msg).toBe("Bad Request")
         })
@@ -135,15 +137,9 @@ describe.skip('GET /api/articles/:article_id/comments', () => {
         .get(`/api/articles/${pathID}/comments`)
         .expect(200)
         .then((response) => {
-          expect(response.body.lengt).toBe(0);
+          expect(Array.isArray(response.body.comments)).toBe(true);
+          expect(response.body.comments.length).toBe(0);
         })
     });
   });
-
-// should return 200 status code and an array of comments for the given article_id
-// each comment element should have keys of comment_id votes created_at author body article_id
-// array should be sorted in descending order
-// should return a 404 if queried with a non-existent id (article doesn't exist)
-// should return a 400 error when queried with an invalid id 
-// should return an empty array if article exists but has no comments
 

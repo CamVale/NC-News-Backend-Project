@@ -1,4 +1,5 @@
-const { selectAllTopics, selectAllEndpoints, selectArticles } = require("../models/app.model");
+const { checkExists } = require("../db/seeds/utils");
+const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID } = require("../models/app.model");
 
 exports.getTopics = (req, res, next) => {
   selectAllTopics().then((topics) => {
@@ -19,3 +20,16 @@ exports.getArticles = (req, res, next) => {
   ])
   .catch(next)
 };
+
+exports.getCommentsByArticleID = (req, res, next) => {
+  const { article_id : id } = req.params
+
+  const commentPromises = [selectCommentsByArticleID(id), checkExists('articles', 'article_id', id)]
+
+  Promise.all(commentPromises)
+  .then((resolved)=> {
+    const comments = resolved[0]
+    res.status(200).send({ comments })
+  })
+  .catch(next)
+}
