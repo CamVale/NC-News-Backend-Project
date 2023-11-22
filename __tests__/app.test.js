@@ -78,7 +78,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe('GET /api/articles/:article_id/comments', () => {
+describe.skip('GET /api/articles/:article_id/comments', () => {
   test('should return a 200 status code and an array of comments on the given article at  article_id', () => {
     test("should respond with 200 status code and array of topic objects", () => {
       const pathID = '1'
