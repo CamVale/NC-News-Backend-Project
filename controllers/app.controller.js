@@ -1,6 +1,8 @@
 
+
 const { checkExists } = require("../db/seeds/utils");
-const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery} = require("../models/app.model");
+const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery, createComment} = require("../models/app.model");
+
 
 
 exports.getTopics = (req, res, next) => {
@@ -15,13 +17,22 @@ exports.getEndpoints = (req, res, next) => {
   });
 };
 
-exports.getArticlesByID = (req, res, next) => {
-  const { article_id: id } = req.params
-  selectArticles(id).then((articles)=>{
-    res.status(200).send(articles)
-})
-  .catch(next)
+exports.getArticles = (req, res, next) => {
+  const { article_id: id } = req.params;
+  selectArticles(id)
+    .then((articles) => [res.status(200).send(articles)])
+    .catch(next);
 };
+
+exports.postComment = (req, res, next) => {
+  const newComment = req.body;
+  const { article_id: id } = req.params;
+  createComment(id, newComment).then((comment) => {
+      console.log(comment, 'returned comment')
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+
 
 
 exports.getCommentsByArticleID = (req, res, next) => {

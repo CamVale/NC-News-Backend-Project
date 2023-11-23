@@ -81,6 +81,87 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should insert the new comment into the db and return the posted comment object", () => {
+    const timestamp = new Date(Date.now())
+    const pathID = 2
+    const newComment = {
+      username: "rogersop",
+      body: "its beginning to look a lot like christmas!"
+    }
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: "its beginning to look a lot like christmas!",
+          votes: 0,
+          author: "rogersop",
+          article_id: pathID,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test('should return a 400 error if request not passed required fields', () => {
+    const pathID = '2'
+    const newComment = {
+      username: "rogersop",
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad Request')
+      });
+  });
+  test('should return a 400 error if request passed an invalid id', () => {
+    const pathID = 'pigeon'
+    const newComment = {
+      username: "rogersop",
+      body: "hi there"
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad Request')
+      });
+  });
+  test('should return a 404 error if request passed a non-existent id', () => {
+    const pathID = '200'
+    const newComment = {
+      username: "rogersop",
+      body: "lots of love <3"
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe('Not Found')
+      });
+  });
+  test('should return a 404 error if username does not exist', () => {
+    const pathID = '2'
+    const newComment = {
+      username: "beepboopbop",
+      body: "need a cuppa"
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe('Not Found')
+      });
+  });
+  });
+
+
 describe('GET /api/articles/:article_id/comments', () => {
   test('should return a 200 status code and an array of comments on the given article at  article_id - with correct keys on ojects', () => {
       const pathID = '1'
@@ -192,6 +273,4 @@ describe("GET /api/articles", () => {
   });
 });
 
-// should return status code 200 and an array of all article objects with a comment_count key, and the body key omitted
-// comment count property should be accurate
-// objects should be sorted by date in descending order
+
