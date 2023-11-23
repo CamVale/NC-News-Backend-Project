@@ -17,7 +17,7 @@ exports.getEndpoints = (req, res, next) => {
   });
 };
 
-exports.getArticles = (req, res, next) => {
+exports.getArticlesByID = (req, res, next) => {
   const { article_id: id } = req.params;
   selectArticles(id)
     .then((articles) => [res.status(200).send(articles)])
@@ -28,7 +28,6 @@ exports.postComment = (req, res, next) => {
   const newComment = req.body;
   const { article_id: id } = req.params;
   createComment(id, newComment).then((comment) => {
-      console.log(comment, 'returned comment')
       res.status(201).send({ comment });
     })
     .catch(next);
