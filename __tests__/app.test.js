@@ -268,7 +268,7 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe.only("DELETE /api/comments/:comment_id", () => {
+describe("DELETE /api/comments/:comment_id", () => {
   test("should delete the item from database at given id", () => {
     const pathID = "2";
     return request(app)
