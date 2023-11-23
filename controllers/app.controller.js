@@ -1,5 +1,7 @@
+
 const { checkExists } = require("../db/seeds/utils");
-const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID } = require("../models/app.model");
+const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery} = require("../models/app.model");
+
 
 exports.getTopics = (req, res, next) => {
   selectAllTopics().then((topics) => {
@@ -13,13 +15,14 @@ exports.getEndpoints = (req, res, next) => {
   });
 };
 
-exports.getArticles = (req, res, next) => {
+exports.getArticlesByID = (req, res, next) => {
   const { article_id: id } = req.params
-  selectArticles(id).then((articles)=>[
+  selectArticles(id).then((articles)=>{
     res.status(200).send(articles)
-  ])
+})
   .catch(next)
 };
+
 
 exports.getCommentsByArticleID = (req, res, next) => {
   const { article_id : id } = req.params
@@ -33,3 +36,11 @@ exports.getCommentsByArticleID = (req, res, next) => {
   })
   .catch(next)
 }
+
+exports.getArticles = (req, res, next) => {
+  selectArticlesByQuery().then((articles)=>{
+    res.status(200).send({articles})
+  })
+  .catch(next)
+}
+
