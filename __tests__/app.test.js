@@ -104,7 +104,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   test('should return a 400 error if request not passed required fields', () => {
     const pathID = '2'
     const newComment = {
-      username: "beepboopbop",
+      username: "rogersop",
     };
     return request(app)
       .post(`/api/articles/${pathID}/comments`)
@@ -117,7 +117,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   test('should return a 400 error if request passed an invalid id', () => {
     const pathID = 'pigeon'
     const newComment = {
-      username: "beepboopbop",
+      username: "rogersop",
       body: "hi there"
     };
     return request(app)
@@ -131,7 +131,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   test('should return a 404 error if request passed a non-existent id', () => {
     const pathID = '200'
     const newComment = {
-      username: "beepboopbop",
+      username: "rogersop",
       body: "lots of love <3"
     };
     return request(app)
@@ -142,4 +142,18 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe('Not Found')
       });
   });
-});
+  test('should return a 404 error if username does not exist', () => {
+    const pathID = '2'
+    const newComment = {
+      username: "beepboopbop",
+      body: "need a cuppa"
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe('Not Found')
+      });
+  });
+  });
