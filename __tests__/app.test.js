@@ -80,6 +80,71 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+
+describe('GET /api/articles/:article_id/comments', () => {
+  test('should return a 200 status code and an array of comments on the given article at  article_id - with correct keys on ojects', () => {
+      const pathID = '1'
+      return request(app)
+        .get(`/api/articles/${pathID}/comments`)
+        .expect(200)
+        .then((response) => {
+          console.log(response.body.comments[0])
+          expect(response.body.comments.length).toBe(11);
+          response.body.comments.forEach((comment) => {
+            expect(comment).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+            });
+          });
+        });
+    });
+    test('array should be sorted in descending order', () => {
+      const pathID = '1'
+      return request(app)
+        .get(`/api/articles/${pathID}/comments`)
+        .expect(200)
+        .then((response) => {
+          expect(response.body.comments).toBeSorted({
+            key: "created_at",
+            coerce: true,
+            descending: true,
+          })
+        })
+    });
+    test('should return a 404 error if queried with a non-existent article_id (article doesnt exist)', () => {
+      const pathID = '100'
+      return request(app)
+        .get(`/api/articles/${pathID}/comments`)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not found")
+        })
+    });
+    test('should return a 400 error if queried with an invalid id', () => {
+      const pathID = 'pigeon'
+      return request(app)
+        .get(`/api/articles/${pathID}/comments`)
+        .expect(400)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad Request")
+        })
+    });
+    test('should return an empty array if article exists but has no comments', () => {
+      const pathID = '2'
+      return request(app)
+        .get(`/api/articles/${pathID}/comments`)
+        .expect(200)
+        .then((response) => {
+          expect(Array.isArray(response.body.comments)).toBe(true);
+          expect(response.body.comments.length).toBe(0);
+        })
+    });
+  });
+
 describe("GET /api/articles", () => {
   test("should return status code 200, and an array of all article objects, with a comment_count key included, and body key omitted", () => {
     return request(app)
