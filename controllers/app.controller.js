@@ -1,9 +1,9 @@
-const {
-  selectAllTopics,
-  selectAllEndpoints,
-  selectArticles,
-  createComment,
-} = require("../models/app.model");
+
+
+const { checkExists } = require("../db/seeds/utils");
+const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery, createComment} = require("../models/app.model");
+
+
 
 exports.getTopics = (req, res, next) => {
   selectAllTopics().then((topics) => {
@@ -32,4 +32,26 @@ exports.postComment = (req, res, next) => {
       res.status(201).send({ comment });
     })
     .catch(next);
-};
+
+
+
+exports.getCommentsByArticleID = (req, res, next) => {
+  const { article_id : id } = req.params
+
+  const commentPromises = [selectCommentsByArticleID(id), checkExists('articles', 'article_id', id)]
+
+  Promise.all(commentPromises)
+  .then((resolved)=> {
+    const comments = resolved[0]
+    res.status(200).send({ comments })
+  })
+  .catch(next)
+}
+
+exports.getArticles = (req, res, next) => {
+  selectArticlesByQuery().then((articles)=>{
+    res.status(200).send({articles})
+  })
+  .catch(next)
+}
+
