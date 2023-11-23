@@ -56,3 +56,10 @@ exports.selectArticlesByQuery = () => {
     });
 };
 
+exports.removeCommentByID= (id) =>{
+    return db.query(`DELETE FROM comments
+    WHERE comment_id = $1 RETURNING *;`, [id]).then((result)=>{
+        return result.rows.length ? result.rows[0] : Promise.reject({status : 404, msg: 'Not Found'})
+    })
+}
+
