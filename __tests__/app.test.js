@@ -78,4 +78,68 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should insert the new comment into the db and return the posted comment object", () => {
+    const timestamp = new Date(Date.now())
+    const pathID = 2
+    const newComment = {
+      username: "rogersop",
+      body: "its beginning to look a lot like christmas!"
+    }
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        expect(response.body.comment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: "its beginning to look a lot like christmas!",
+          votes: 0,
+          author: "rogersop",
+          article_id: pathID,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test('should return a 400 error if request not passed required fields', () => {
+    const pathID = '2'
+    const newComment = {
+      username: "beepboopbop",
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad Request')
+      });
+  });
+  test('should return a 400 error if request passed an invalid id', () => {
+    const pathID = 'pigeon'
+    const newComment = {
+      username: "beepboopbop",
+      body: "hi there"
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad Request')
+      });
+  });
+  test('should return a 404 error if request passed a non-existent id', () => {
+    const pathID = '200'
+    const newComment = {
+      username: "beepboopbop",
+      body: "lots of love <3"
+    };
+    return request(app)
+      .post(`/api/articles/${pathID}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe('Not Found')
+      });
+  });
+});
