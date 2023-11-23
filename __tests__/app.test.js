@@ -169,7 +169,6 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get(`/api/articles/${pathID}/comments`)
         .expect(200)
         .then((response) => {
-          console.log(response.body.comments[0])
           expect(response.body.comments.length).toBe(11);
           response.body.comments.forEach((comment) => {
             expect(comment).toMatchObject({
@@ -232,7 +231,6 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        console.log(response.body.articles, 'response here')
         expect(response.body.articles.length).toBe(13);
         response.body.articles.forEach((topic) => {
           expect(topic).toMatchObject({
