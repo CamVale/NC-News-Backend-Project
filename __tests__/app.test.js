@@ -273,4 +273,47 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe.only('PATCH /api/articles/:article_id', () => {
+  test('should return 202 status code and the updated article, with thhe vote property changed by the given amount incremented', () => {
+    const pathID = "2";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: 20})
+      .expect(202)
+      .then((response) => {
+        expect(response.body.article.votes).toBe(20)
+      });
+  });
+  test('should also be able to reduce the votes by the given negative amount', () => {
+    const pathID = "1";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: -20})
+      .expect(202)
+      .then((response) => {
+        expect(response.body.article.votes).toBe(80)
+      });
+  });
+  test('should return a 404 error when passed a non-existent id', () => {
+    const pathID = "100";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: 10})
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found")
+      });
+  });
+  test('should return a 400 error when passed an invalid id', () => {
+    const pathID = "pigeon";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: -20})
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad Request')
+      });
+  });
+});
+
 
