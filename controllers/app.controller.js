@@ -1,7 +1,7 @@
 
 
 const { checkExists } = require("../db/seeds/utils");
-const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery, createComment} = require("../models/app.model");
+const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery, createComment, removeCommentByID} = require("../models/app.model");
 
 
 
@@ -17,7 +17,7 @@ exports.getEndpoints = (req, res, next) => {
   });
 };
 
-exports.getArticles = (req, res, next) => {
+exports.getArticlesByID = (req, res, next) => {
   const { article_id: id } = req.params;
   selectArticles(id)
     .then((articles) => [res.status(200).send(articles)])
@@ -28,11 +28,10 @@ exports.postComment = (req, res, next) => {
   const newComment = req.body;
   const { article_id: id } = req.params;
   createComment(id, newComment).then((comment) => {
-      console.log(comment, 'returned comment')
       res.status(201).send({ comment });
     })
     .catch(next);
-
+  }
 
 
 exports.getCommentsByArticleID = (req, res, next) => {
@@ -51,6 +50,14 @@ exports.getCommentsByArticleID = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   selectArticlesByQuery().then((articles)=>{
     res.status(200).send({articles})
+  })
+  .catch(next)
+}
+
+exports.deleteCommentByID = (req, res, next) =>{
+  const {comment_id : id} = req.params
+  removeCommentByID(id).then((result)=>{
+    res.status(204).send()
   })
   .catch(next)
 }
