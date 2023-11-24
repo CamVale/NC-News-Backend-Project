@@ -56,3 +56,6 @@ exports.selectArticlesByQuery = () => {
     });
 };
 
+exports.selectArticlesByTopic = () =>{
+    console.log('model here')
+}

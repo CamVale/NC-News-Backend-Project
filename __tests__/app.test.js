@@ -53,7 +53,7 @@ describe("GET /api/articles/:article_id", () => {
           title: "Sony Vaio; or, The Laptop",
           topic: "mitch",
           author: "icellusedkars",
-          body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
+          body: "Call me Mitchell. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would buy a laptop about a little and see the codey part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people's hats off—then, I account it high time to get to coding as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the laptop. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the the Vaio with me.",
           created_at: convertTimestampToDate(1602828180000),
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -271,4 +271,60 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe.skip("GET /api/articles/:topic/topics", () => {
+  test("should return status code 200 and an object containing the article of the given id", () => {
+    const topicQuery = "mitch";
+    return request(app)
+      .get(`/api/articles/${topicQuery}/topics`)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(12)
+        response.body.articles.forEach((article)=>{
+        expect(article.topic).toBe("mitch")
+      });
+    })
+  });
+  test('should return a 200 status code and all articles if queried with no topic', () => {
+    return request(app)
+    .get("/api/articles//topics")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.articles.length).toBe(13);
+      response.body.articles.forEach((topic) => {
+        expect(topic).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+    });
+  });
+  test('should return a 404 error when queried with a non-existent topic', () => {
+    const topicQuery = '100'
+      return request(app)
+        .get(`/api/articles/${topicQuery}/topics`)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Not Found")
+        })
+  });
+  test('should return a 400 error when queried with an invalid topic query', () => {
+    const topicQuery = 222
+      return request(app)
+        .get(`/api/articles/${topicQuery}/topics`)
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe("Bad Request")
+        })
+  });
+})
 
+// should return a 200 status code and an array of articles with the queried topic property 
+// should return a 200 status and all articles when queried with no topic
+// should return a 404 error when queried with a non-existent topic
+// should return a 400 error when queried with a non-string
