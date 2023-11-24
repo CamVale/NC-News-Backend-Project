@@ -273,7 +273,7 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe.only('PATCH /api/articles/:article_id', () => {
+describe('PATCH /api/articles/:article_id', () => {
   test('should return 202 status code and the updated article, with thhe vote property changed by the given amount incremented', () => {
     const pathID = "2";
     return request(app)
