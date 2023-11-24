@@ -20,7 +20,7 @@ exports.getEndpoints = (req, res, next) => {
 exports.getArticlesByID = (req, res, next) => {
   const { article_id: id } = req.params;
   selectArticles(id)
-    .then((articles) => [res.status(200).send(articles)])
+    .then((articles) => {res.status(200).send(articles)})
     .catch(next);
 };
 

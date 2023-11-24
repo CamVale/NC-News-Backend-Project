@@ -19,7 +19,7 @@ app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 app.post('/api/articles/:article_id/comments', postComment)
 
-app.get('/api/articles/:topic/topics', getArticlesByTopic)
+// app.get('/api/articles/:topic/topics', getArticlesByTopic)
 
 app.use(handleSQLError)
 app.use(handleCustomErrors)
