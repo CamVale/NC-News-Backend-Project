@@ -159,6 +159,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
+
 describe("GET /api/articles/:article_id/comments", () => {
   test("should return a 200 status code and an array of comments on the given article at  article_id - with correct keys on ojects", () => {
     const pathID = "1";
@@ -268,6 +269,51 @@ describe("GET /api/articles", () => {
   });
 });
 
+
+describe('PATCH /api/articles/:article_id', () => {
+  test('should return 202 status code and the updated article, with thhe vote property changed by the given amount incremented', () => {
+    const pathID = "2";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: 20})
+      .expect(202)
+      .then((response) => {
+        expect(response.body.article.votes).toBe(20)
+      });
+  });
+  test('should also be able to reduce the votes by the given negative amount', () => {
+    const pathID = "1";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: -20})
+      .expect(202)
+      .then((response) => {
+        expect(response.body.article.votes).toBe(80)
+      });
+  });
+  test('should return a 404 error when passed a non-existent id', () => {
+    const pathID = "100";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: 10})
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Not Found")
+      });
+  });
+  test('should return a 400 error when passed an invalid id', () => {
+    const pathID = "pigeon";
+    return request(app)
+      .patch(`/api/articles/${pathID}`)
+      .send({ inc_votes: -20})
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('Bad Request')
+      });
+  });
+});
+
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("should delete the item from database at given id", () => {
     const pathID = "2";
@@ -294,7 +340,3 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
-
-// should delete comment at given id
-// should return a 404 error when passed a non-existent id
-// should return a 400 error when passed an invalid id

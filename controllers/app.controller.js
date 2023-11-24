@@ -1,7 +1,6 @@
-
-
 const { checkExists } = require("../db/seeds/utils");
-const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery, createComment, removeCommentByID} = require("../models/app.model");
+
+const { selectAllTopics, selectAllEndpoints, selectArticles, selectCommentsByArticleID, selectArticlesByQuery, createComment, removeCommentByID, updateVotesByArticleID} = require("../models/app.model");
 
 
 
@@ -27,31 +26,49 @@ exports.getArticlesByID = (req, res, next) => {
 exports.postComment = (req, res, next) => {
   const newComment = req.body;
   const { article_id: id } = req.params;
-  createComment(id, newComment).then((comment) => {
+
+  createComment(id, newComment)
+    .then((comment) => {
       res.status(201).send({ comment });
     })
     .catch(next);
-  }
+};
 
 
 exports.getCommentsByArticleID = (req, res, next) => {
-  const { article_id : id } = req.params
+  const { article_id: id } = req.params;
 
-  const commentPromises = [selectCommentsByArticleID(id), checkExists('articles', 'article_id', id)]
+  const commentPromises = [
+    selectCommentsByArticleID(id),
+    checkExists("articles", "article_id", id),
+  ];
 
   Promise.all(commentPromises)
-  .then((resolved)=> {
-    const comments = resolved[0]
-    res.status(200).send({ comments })
-  })
-  .catch(next)
-}
+    .then((resolved) => {
+      const comments = resolved[0];
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
 
 exports.getArticles = (req, res, next) => {
-  selectArticlesByQuery().then((articles)=>{
-    res.status(200).send({articles})
+  selectArticlesByQuery()
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.patchVotes = (req, res, next) => {
+  const { inc_votes : votes} = req.body
+  const { article_id: id} = req.params
+  updateVotesByArticleID(id, votes).then((article)=>{
+    res.status(202).send({ article })
   })
   .catch(next)
+
+};
+
 }
 
 exports.deleteCommentByID = (req, res, next) =>{
@@ -61,4 +78,5 @@ exports.deleteCommentByID = (req, res, next) =>{
   })
   .catch(next)
 }
+
 
