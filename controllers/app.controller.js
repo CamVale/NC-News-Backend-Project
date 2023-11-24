@@ -1,18 +1,6 @@
 const { checkExists } = require("../db/seeds/utils");
 
-const {
-  selectAllTopics,
-  selectAllEndpoints,
-  selectArticles,
-  selectCommentsByArticleID,
-  selectArticlesByQuery,
-  createComment,
-    removeCommentByID,
-    updateVotesByArticleID,
-  selectArticlesByTopic,
-  selectAllUsers,
-    
-} = require("../models/app.model");
+
 
 
 exports.getTopics = (req, res, next) => {
@@ -111,7 +99,7 @@ exports.patchVotes = (req, res, next) => {
 
 };
 
-}
+
 
 exports.deleteCommentByID = (req, res, next) =>{
   const {comment_id : id} = req.params
