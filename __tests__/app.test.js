@@ -57,8 +57,18 @@ describe("GET /api/articles/:article_id", () => {
           created_at: convertTimestampToDate(1602828180000),
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: expect.any(Number)
         });
       });
+  });
+  test('comment count property should be accurate', () => {
+    const pathID = '1'
+    return request(app)
+    .get(`/api/articles/${pathID}`)
+    .expect(200)
+    .then((response)=>{
+      expect(response.body.comment_count).toBe(11)
+    })
   });
   test("should return an error 404 if queried with an non-existent id", () => {
     const pathID = "200";
@@ -271,22 +281,22 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe("GET /api/articles/:topic/topics", () => {
-  test("should return status code 200 and an object containing the article of the given id", () => {
+describe("GET /api/articles?topic=topic", () => {
+  test("should return status code 200 and an object containing the articles of the given topic", () => {
     const topicQuery = "mitch";
     return request(app)
-      .get(`/api/articles/topics/${topicQuery}`)
+      .get(`/api/articles?topic=${topicQuery}`)
       .expect(200)
       .then((response) => {
-        expect(response.body.returnedArticles.length).toBe(12)
-        response.body.returnedArticles.forEach((article)=>{
+        expect(response.body.articles.length).toBe(12)
+        response.body.articles.forEach((article)=>{
         expect(article.topic).toBe("mitch")
       });
     })
   });
   test('should return a 200 status code and all articles if queried with no topic', () => {
     return request(app)
-    .get("/api/articles/topics/")
+    .get("/api/articles")
     .expect(200)
     .then((response) => {
       expect(response.body.articles.length).toBe(13);
@@ -304,13 +314,13 @@ describe("GET /api/articles/:topic/topics", () => {
       });
     });
   });
-  test('should return a 404 error when queried with a non-existent topic', () => {
-    const topicQuery = '100'
+  test('should return an empty array if topic exists but has no articles', () => {
+    const topicQuery = 'paper'
       return request(app)
-        .get(`/api/articles/topics/${topicQuery}`)
-        .expect(404)
+        .get(`/api/articles?topic=${topicQuery}`)
+        .expect(200)
         .then((response) => {
-          expect(response.body.msg).toBe("Not found")
+          expect(response.body.articles).toEqual([])
         })
   });
 })

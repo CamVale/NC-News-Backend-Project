@@ -56,8 +56,9 @@ exports.getCommentsByArticleID = (req, res, next) => {
     .catch(next);
 };
 
-exports.getArticles = (req, res, next) => {
-  selectArticlesByQuery()
+exports.getArticlesByQuery = (req, res, next) => {
+  const { topic } = req.query;
+  selectArticlesByQuery(topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
