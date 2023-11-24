@@ -69,6 +69,13 @@ exports.selectArticlesByQuery = () => {
 };
 
 
+exports.selectAllUsers = () => {
+  return db.query(`SELECT * FROM users`).then((result) => {
+    return result.rows;
+  });
+};
+
+
 exports.updateVotesByArticleID = (id, votes) => {
     const values = [votes, id]
     return db.query(`UPDATE articles

@@ -160,22 +160,24 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 
-describe("GET /api/articles/:article_id/comments", () => {
-  test("should return a 200 status code and an array of comments on the given article at  article_id - with correct keys on ojects", () => {
-    const pathID = "1";
-    return request(app)
-      .get(`/api/articles/${pathID}/comments`)
-      .expect(200)
-      .then((response) => {
-        expect(response.body.comments.length).toBe(11);
-        response.body.comments.forEach((comment) => {
-          expect(comment).toMatchObject({
-            comment_id: expect.any(Number),
-            votes: expect.any(Number),
-            created_at: expect.any(String),
-            author: expect.any(String),
-            body: expect.any(String),
-            article_id: expect.any(Number),
+
+describe('GET /api/articles/:article_id/comments', () => {
+  test('should return a 200 status code and an array of comments on the given article at  article_id - with correct keys on ojects', () => {
+      const pathID = '1'
+      return request(app)
+        .get(`/api/articles/${pathID}/comments`)
+        .expect(200)
+        .then((response) => {
+          expect(response.body.comments.length).toBe(11);
+          response.body.comments.forEach((comment) => {
+            expect(comment).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              article_id: expect.any(Number),
+            });
           });
         });
       });
@@ -269,6 +271,19 @@ describe("GET /api/articles", () => {
   });
 });
 
+describe("GET /api/users", () => {
+  test("should respond with 200 status code and array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users.length).toBe(4);
+        response.body.users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+
 
 describe('PATCH /api/articles/:article_id', () => {
   test('should return 202 status code and the updated article, with thhe vote property changed by the given amount incremented', () => {
@@ -337,6 +352,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toEqual("Not Found");
+
       });
   });
 });
