@@ -11,15 +11,17 @@ app.get('/api/topics', getTopics)
 
 app.get("/api", getEndpoints)
 
+app.get('/api/articles/topics/:topic?', getArticlesByTopic)
+
 app.get('/api/articles/:article_id', getArticlesByID)
 
-app.get('/api/articles', getArticles)
+app.get('/api/articles/', getArticles)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleID)
 
 app.post('/api/articles/:article_id/comments', postComment)
 
-// app.get('/api/articles/:topic/topics', getArticlesByTopic)
+
 
 app.use(handleSQLError)
 app.use(handleCustomErrors)

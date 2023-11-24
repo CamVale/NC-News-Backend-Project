@@ -271,22 +271,22 @@ describe("GET /api/articles", () => {
   });
 });
 
-describe.skip("GET /api/articles/:topic/topics", () => {
+describe("GET /api/articles/:topic/topics", () => {
   test("should return status code 200 and an object containing the article of the given id", () => {
     const topicQuery = "mitch";
     return request(app)
-      .get(`/api/articles/${topicQuery}/topics`)
+      .get(`/api/articles/topics/${topicQuery}`)
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBe(12)
-        response.body.articles.forEach((article)=>{
+        expect(response.body.returnedArticles.length).toBe(12)
+        response.body.returnedArticles.forEach((article)=>{
         expect(article.topic).toBe("mitch")
       });
     })
   });
   test('should return a 200 status code and all articles if queried with no topic', () => {
     return request(app)
-    .get("/api/articles//topics")
+    .get("/api/articles/topics/")
     .expect(200)
     .then((response) => {
       expect(response.body.articles.length).toBe(13);
@@ -307,24 +307,10 @@ describe.skip("GET /api/articles/:topic/topics", () => {
   test('should return a 404 error when queried with a non-existent topic', () => {
     const topicQuery = '100'
       return request(app)
-        .get(`/api/articles/${topicQuery}/topics`)
+        .get(`/api/articles/topics/${topicQuery}`)
         .expect(404)
         .then((response) => {
-          expect(response.body.msg).toBe("Not Found")
-        })
-  });
-  test('should return a 400 error when queried with an invalid topic query', () => {
-    const topicQuery = 222
-      return request(app)
-        .get(`/api/articles/${topicQuery}/topics`)
-        .expect(404)
-        .then((response) => {
-          expect(response.body.msg).toBe("Bad Request")
+          expect(response.body.msg).toBe("Not found")
         })
   });
 })
-
-// should return a 200 status code and an array of articles with the queried topic property 
-// should return a 200 status and all articles when queried with no topic
-// should return a 404 error when queried with a non-existent topic
-// should return a 400 error when queried with a non-string

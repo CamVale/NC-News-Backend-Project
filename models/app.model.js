@@ -56,6 +56,10 @@ exports.selectArticlesByQuery = () => {
     });
 };
 
-exports.selectArticlesByTopic = () =>{
-    console.log('model here')
+exports.selectArticlesByTopic = (topic) =>{
+    return db.query(`SELECT * FROM articles
+    WHERE "topic" = $1;`, [topic])
+    .then((result)=>{
+        return result.rows
+    })
 }
