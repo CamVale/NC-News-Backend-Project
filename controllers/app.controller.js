@@ -1,4 +1,7 @@
 const { checkExists } = require("../db/seeds/utils");
+const { selectAllTopics, selectAllEndpoints, selectArticles, createComment, selectCommentsByArticleID, selectArticlesByQuery, updateVotesByArticleID, removeCommentByID, selectAllUsers } = require("../models/app.model");
+
+
 
 
 
