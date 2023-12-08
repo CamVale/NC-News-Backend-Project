@@ -56,8 +56,18 @@ describe("GET /api/articles/:article_id", () => {
           created_at: convertTimestampToDate(1602828180000),
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: expect.any(Number)
         });
       });
+  });
+  test('comment count property should be accurate', () => {
+    const pathID = '1'
+    return request(app)
+    .get(`/api/articles/${pathID}`)
+    .expect(200)
+    .then((response)=>{
+      expect(response.body.comment_count).toBe(11)
+    })
   });
   test("should return an error 404 if queried with an non-existent id", () => {
     const pathID = "200";
@@ -331,6 +341,51 @@ describe('PATCH /api/articles/:article_id', () => {
 });
 
 
+describe("GET /api/articles?topic=topic", () => {
+  test("should return status code 200 and an object containing the articles of the given topic", () => {
+    const topicQuery = "mitch";
+    return request(app)
+      .get(`/api/articles?topic=${topicQuery}`)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(12)
+        response.body.articles.forEach((article)=>{
+        expect(article.topic).toBe("mitch")
+      });
+    })
+  });
+  test('should return a 200 status code and all articles if queried with no topic', () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then((response) => {
+      expect(response.body.articles.length).toBe(13);
+      response.body.articles.forEach((topic) => {
+        expect(topic).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+    });
+  });
+  test('should return an empty array if topic exists but has no articles', () => {
+    const topicQuery = 'paper'
+      return request(app)
+        .get(`/api/articles?topic=${topicQuery}`)
+        .expect(200)
+        .then((response) => {
+          expect(response.body.articles).toEqual([])
+        })
+  });
+})
+
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("should delete the item from database at given id", () => {
     const pathID = "2";
@@ -358,3 +413,4 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+

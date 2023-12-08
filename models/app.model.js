@@ -2,7 +2,7 @@ const { response } = require("express");
 const db = require("../db/connection");
 const endpoints = require("../endpoints.json");
 
-const { convertTimestampToDate } = require("../db/seeds/utils");
+const { convertTimestampToDate, checkExists } = require("../db/seeds/utils");
 const format = require("pg-format");
 
 exports.selectAllTopics = () => {
@@ -18,8 +18,8 @@ exports.selectAllEndpoints = () => {
 exports.selectArticles = (id) => {
   return db
     .query(
-      `SELECT * FROM articles
-    WHERE article_id = $1;`,
+      `SELECT articles.*, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1
+      GROUP BY articles.article_id;`,
       [id]
     )
     .then((result) => {
@@ -46,6 +46,7 @@ exports.createComment = (id, comment) => {
     });
 };
 exports.selectCommentsByArticleID = (id) => {
+
   return db
     .query(
       `SELECT comments.* FROM comments JOIN articles ON comments.article_id = articles.article_id
@@ -59,14 +60,35 @@ exports.selectCommentsByArticleID = (id) => {
 };
 
 exports.selectArticlesByQuery = () => {
+
   return db
     .query(
-      `SELECT articles.article_id, title, topic, articles.author, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id`
+      `SELECT comments.* FROM comments JOIN articles ON comments.article_id = articles.article_id
+    WHERE comments.article_id = $1
+    ORDER BY created_at DESC`,
+      [id]
     )
     .then((result) => {
       return result.rows;
     });
 };
+
+exports.selectArticlesByQuery = (topic) => {
+  const queryValues = [];
+
+  let queryString = `SELECT articles.*, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `;
+
+  if (topic && checkExists("topics", "slug", topic).catch(()=>{})) {
+    queryValues.push(topic);
+    queryString += 'WHERE "topic" = $1 ';
+  }
+
+  queryString += "GROUP BY articles.article_id;";
+
+  return db.query(queryString, queryValues).then((result) => {
+    return result.rows
+  })
+  }
 
 
 exports.selectAllUsers = () => {
@@ -91,5 +113,6 @@ exports.removeCommentByID= (id) =>{
         return result.rows.length ? result.rows[0] : Promise.reject({status : 404, msg: 'Not Found'})
     })
 }
+
 
 
