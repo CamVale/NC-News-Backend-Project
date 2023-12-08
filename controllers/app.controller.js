@@ -1,4 +1,5 @@
 const { checkExists } = require("../db/seeds/utils");
+
 const {
   selectAllTopics,
   selectAllEndpoints,
@@ -6,8 +7,13 @@ const {
   selectCommentsByArticleID,
   selectArticlesByQuery,
   createComment,
+    removeCommentByID,
+    updateVotesByArticleID,
   selectArticlesByTopic,
+  selectAllUsers,
+    
 } = require("../models/app.model");
+
 
 exports.getTopics = (req, res, next) => {
   selectAllTopics().then((topics) => {
@@ -33,12 +39,14 @@ exports.getArticlesByID = (req, res, next) => {
 exports.postComment = (req, res, next) => {
   const newComment = req.body;
   const { article_id: id } = req.params;
+
   createComment(id, newComment)
     .then((comment) => {
       res.status(201).send({ comment });
     })
     .catch(next);
 };
+
 
 exports.getCommentsByArticleID = (req, res, next) => {
   const { article_id: id } = req.params;
@@ -55,6 +63,7 @@ exports.getCommentsByArticleID = (req, res, next) => {
     })
     .catch(next);
 };
+
 
 exports.getArticlesByQuery = (req, res, next) => {
   const { topic } = req.query;
@@ -82,3 +91,43 @@ exports.getArticlesByTopic = (req, res, next) => {
       .catch(next);
   }
 };
+
+
+exports.getArticles = (req, res, next) => {
+  selectArticlesByQuery()
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.patchVotes = (req, res, next) => {
+  const { inc_votes : votes} = req.body
+  const { article_id: id} = req.params
+  updateVotesByArticleID(id, votes).then((article)=>{
+    res.status(202).send({ article })
+  })
+  .catch(next)
+
+};
+
+}
+
+exports.deleteCommentByID = (req, res, next) =>{
+  const {comment_id : id} = req.params
+  removeCommentByID(id).then((result)=>{
+    res.status(204).send()
+  })
+  .catch(next)
+}
+
+
+exports.getUsers = (req,res,next) =>{
+  selectAllUsers().then((users)=>{
+    res.status(200).send({users})
+  })
+  .catch(next)
+}
+
+
+
