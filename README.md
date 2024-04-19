@@ -2,7 +2,6 @@
 
 [![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=flat&logo=node.js&logoColor=white)](https://nodejs.org)
 [![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=flat&logo=express&logoColor=%2361DAFB)](https://expressjs.com)
-[![codecov](https://codecov.io/gh/Ak5cel/nc-news/graph/badge.svg?token=LKKE9VC0FE)](https://codecov.io/gh/Ak5cel/nc-news)
 
 A news API that serves topics, articles, comments and users. It has full functionality meaning users can GET, POST, PATCH and DELETE from this API. Produced as part of a project on RESTful APIs. This project uses Express.js and Postgres databases. 
 
